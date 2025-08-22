@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'package:mobile_hub_plugin/mobile_hub_plugin.dart';
+import 'package:mobile_client/ble_devices_page/ble_devices_page_view.dart';
+import 'package:mobile_client/settings_page/settings_page_view.dart';
 
 class HomePageView extends StatelessWidget {
   const HomePageView({super.key});
@@ -19,7 +20,20 @@ class HomePageView extends StatelessWidget {
               leading: const Icon(Icons.settings),
               title: const Text('Configurações'),
               onTap: () {
-                // TODO: Menu de configurações
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingsPageView()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.bluetooth_sharp),
+              title: const Text('Dispositivos BLE'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BleDevicesPageView()),
+                );
               },
             ),
           ],

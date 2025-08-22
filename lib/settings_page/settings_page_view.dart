@@ -40,10 +40,10 @@ class _SettingsPageViewState extends State<SettingsPageView> {
                         ble = newValue;
                         if (ble) {
                           print('começou a escanear');
-                          // começa a escanear por dispositivos ble
+                          // TODO: startHub()
                         } else {
                           print('parou de escanear');
-                          // para de escanear por dispositivos ble
+                          // TODO: stopHub()
                         }
                       });
                     },
