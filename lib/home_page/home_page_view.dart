@@ -1,9 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_client/ble_devices_page/ble_devices_page_view.dart';
+import 'package:mobile_client/home_page/home_page_view_model.dart';
 import 'package:mobile_client/settings_page/settings_page_view.dart';
+import 'package:provider/provider.dart';
 
-class HomePageView extends StatelessWidget {
+class HomePageView extends StatefulWidget {
   const HomePageView({super.key});
+
+  @override
+  State<HomePageView> createState() => _HomePageViewState();
+}
+
+class _HomePageViewState extends State<HomePageView> {
+  late HomePageViewModel homePageViewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    homePageViewModel = HomePageViewModel();
+    homePageViewModel.startConnectionStatus();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +56,21 @@ class HomePageView extends StatelessWidget {
         ),
       ),
       body: Center(
-        child: Text(
-          "Essa é a home page",
-          style: Theme.of(context).textTheme.headlineMedium,
+        child: Column(
+          children: [
+            ChangeNotifierProvider.value(
+              value: homePageViewModel,
+              child: Consumer<HomePageViewModel>(
+                builder: (context, vm, child) {
+                  return Text(
+                    'Conexão com ContextNet: ${vm.connectionStatus}',
+                    style: TextStyle(fontSize: 30),
+                    textAlign: TextAlign.center,
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
