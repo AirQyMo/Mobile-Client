@@ -19,6 +19,7 @@ class _HomePageViewState extends State<HomePageView> {
     super.initState();
     homePageViewModel = HomePageViewModel();
     homePageViewModel.startConnectionStatus();
+    homePageViewModel.receiveMessage();
   }
 
   @override
@@ -58,16 +59,53 @@ class _HomePageViewState extends State<HomePageView> {
       body: Center(
         child: Column(
           children: [
+            SizedBox(height: 10),
             ChangeNotifierProvider.value(
               value: homePageViewModel,
               child: Consumer<HomePageViewModel>(
                 builder: (context, vm, child) {
                   return Text(
                     'Conexão com ContextNet: ${vm.connectionStatus}',
-                    style: TextStyle(fontSize: 30),
+                    style: TextStyle(fontSize: 18),
                     textAlign: TextAlign.center,
                   );
                 },
+              ),
+            ),
+            Expanded(
+              child: ChangeNotifierProvider.value(
+                value: homePageViewModel,
+                child: Consumer<HomePageViewModel>(
+                  builder: (context, vm, child) {
+                    if (vm.message.entries.isEmpty) return Text('Vazio');
+                    return Column(
+                      children: [
+                        SizedBox(height: 25),
+                        Text(
+                          vm.message['location']['address'],
+                          style: TextStyle(fontSize: 24),
+                        ),
+                        Text(
+                          'Nível de risco: ${vm.message['risk_level']}',
+                          style: TextStyle(fontSize: 24),
+                        ),
+                        Text('Recomendações:', style: TextStyle(fontSize: 24)),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: vm.message['recommendations'].length,
+                            itemBuilder: (context, index) {
+                              return Text(
+                                vm.message['recommendations'][index],
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 16),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ),
             ),
           ],
