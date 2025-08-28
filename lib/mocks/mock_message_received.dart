@@ -32,7 +32,7 @@ class MockMessageReceived {
       ],
     };
 
-    Timer(Duration(seconds: 5), () {
+    Timer(Duration(seconds: 0), () {
       _controller.add(message);
     });
   }

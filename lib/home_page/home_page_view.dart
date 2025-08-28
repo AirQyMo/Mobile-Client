@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_client/ble_devices_page/ble_devices_page_view.dart';
+import 'package:mobile_client/home_page/components/location_component.dart';
 import 'package:mobile_client/home_page/home_page_view_model.dart';
 import 'package:mobile_client/settings_page/settings_page_view.dart';
 import 'package:provider/provider.dart';
@@ -34,22 +35,22 @@ class _HomePageViewState extends State<HomePageView> {
           children: [
             DrawerHeader(child: Text('Menu', style: TextStyle(fontSize: 24))),
             ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Configurações'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SettingsPageView()),
-                );
-              },
-            ),
-            ListTile(
               leading: const Icon(Icons.bluetooth_sharp),
               title: const Text('Dispositivos BLE'),
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => BleDevicesPageView()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Configurações'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingsPageView()),
                 );
               },
             ),
@@ -81,10 +82,7 @@ class _HomePageViewState extends State<HomePageView> {
                     return Column(
                       children: [
                         SizedBox(height: 25),
-                        Text(
-                          vm.message['location']['address'],
-                          style: TextStyle(fontSize: 24),
-                        ),
+                        LocationComponent(locationName: vm.message['location']['address']),
                         Text(
                           'Nível de risco: ${vm.message['risk_level']}',
                           style: TextStyle(fontSize: 24),

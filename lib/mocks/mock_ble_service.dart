@@ -32,7 +32,7 @@ class MockBleService {
       },
     ];
 
-    Timer.periodic(Duration(seconds: 2), (timer) {
+    Timer.periodic(Duration(seconds: 0), (timer) {
       if (timer.tick <= mockDevices.length) {
         _controller.add(mockDevices[timer.tick - 1]);
       } else {

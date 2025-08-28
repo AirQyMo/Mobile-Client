@@ -7,7 +7,7 @@ class MockConnectionStatus {
 
   void connectionCycle() {
     _controller.add('DISCONNECTED');
-    Timer(Duration(seconds: 3), () {
+    Timer(Duration(seconds: 0), () {
       _controller.add('CONNECTED');
     });
   }
