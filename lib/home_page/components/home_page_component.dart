@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 
-class LocationComponent extends StatelessWidget {
-  final String locationName;
-  const LocationComponent({super.key, required this.locationName});
+class HomePageComponent extends StatelessWidget {
+  final String inputText;
+  final IconData icon;
+  final Color color;
+  const HomePageComponent({
+    super.key,
+    required this.inputText,
+    required this.icon,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +18,7 @@ class LocationComponent extends StatelessWidget {
       width: screenSize - screenSize / 5,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Colors.grey,
+        color: color,
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withValues(alpha: 0.5),
@@ -23,13 +30,13 @@ class LocationComponent extends StatelessWidget {
       padding: EdgeInsets.all(10),
       child: Row(
         children: [
-          Icon(Icons.location_pin),
+          Icon(icon),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Center(
                 child: Text(
-                  locationName,
+                  inputText,
                   textAlign: TextAlign.justify,
                   style: TextStyle(fontSize: 20),
                 ),

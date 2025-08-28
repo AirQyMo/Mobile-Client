@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_client/ble_devices_page/ble_devices_page_view.dart';
-import 'package:mobile_client/home_page/components/location_component.dart';
+import 'package:mobile_client/home_page/components/home_page_component.dart';
 import 'package:mobile_client/home_page/home_page_view_model.dart';
 import 'package:mobile_client/settings_page/settings_page_view.dart';
 import 'package:provider/provider.dart';
@@ -79,13 +79,41 @@ class _HomePageViewState extends State<HomePageView> {
                 child: Consumer<HomePageViewModel>(
                   builder: (context, vm, child) {
                     if (vm.message.entries.isEmpty) return Text('Vazio');
+
+                    (String, Color, IconData) getRiskConfig(String level) {
+                      return switch (level) {
+                        "moderate" => (
+                          "Moderado",
+                          Colors.yellow,
+                          Icons.back_hand,
+                        ),
+                        "high" => ("Alto", Colors.red, Icons.warning),
+                        "critical" => (
+                          "Crítico",
+                          Color.fromARGB(255, 160, 20, 10),
+                          Icons.dangerous,
+                        ),
+                        _ => ("Erro", Colors.white, Icons.error),
+                      };
+                    }
+
+                    final (riskText, riskColor, riskIcon) = getRiskConfig(
+                      vm.message['risk_level'],
+                    );
+
                     return Column(
+                      spacing: 10,
                       children: [
                         SizedBox(height: 25),
-                        LocationComponent(locationName: vm.message['location']['address']),
-                        Text(
-                          'Nível de risco: ${vm.message['risk_level']}',
-                          style: TextStyle(fontSize: 24),
+                        HomePageComponent(
+                          inputText: vm.message['location']['address'],
+                          icon: Icons.location_pin,
+                          color: Colors.grey,
+                        ),
+                        HomePageComponent(
+                          inputText: riskText,
+                          icon: riskIcon,
+                          color: riskColor,
                         ),
                         Text('Recomendações:', style: TextStyle(fontSize: 24)),
                         Expanded(
