@@ -30,6 +30,21 @@ class _HomePageViewState extends State<HomePageView> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("Home Page"),
+        actionsPadding: EdgeInsets.all(10),
+        actions: [
+          ChangeNotifierProvider.value(
+            value: homePageViewModel,
+            child: Consumer<HomePageViewModel>(
+              builder: (context, vm, child) {
+                if (vm.connectionStatus == "CONNECTED") {
+                  return Icon(Icons.wifi);
+                } else {
+                  return Icon(Icons.wifi_off);
+                }
+              },
+            ),
+          ),
+        ],
       ),
       drawer: Drawer(
         child: ListView(
@@ -61,19 +76,6 @@ class _HomePageViewState extends State<HomePageView> {
       body: Center(
         child: Column(
           children: [
-            SizedBox(height: 10),
-            ChangeNotifierProvider.value(
-              value: homePageViewModel,
-              child: Consumer<HomePageViewModel>(
-                builder: (context, vm, child) {
-                  return Text(
-                    'Conexão com ContextNet: ${vm.connectionStatus}',
-                    style: TextStyle(fontSize: 18),
-                    textAlign: TextAlign.center,
-                  );
-                },
-              ),
-            ),
             Expanded(
               child: ChangeNotifierProvider.value(
                 value: homePageViewModel,
