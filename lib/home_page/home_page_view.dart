@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_client/ble_devices_page/ble_devices_page_view.dart';
 import 'package:mobile_client/home_page/components/home_page_component.dart';
+import 'package:mobile_client/home_page/components/recomendations_component.dart';
 import 'package:mobile_client/home_page/home_page_view_model.dart';
 import 'package:mobile_client/settings_page/settings_page_view.dart';
 import 'package:provider/provider.dart';
@@ -115,18 +116,11 @@ class _HomePageViewState extends State<HomePageView> {
                           icon: riskIcon,
                           color: riskColor,
                         ),
-                        Text('Recomendações:', style: TextStyle(fontSize: 24)),
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: vm.message['recommendations'].length,
-                            itemBuilder: (context, index) {
-                              return Text(
-                                vm.message['recommendations'][index],
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 16),
-                              );
-                            },
-                          ),
+                        RecomendationsComponent(
+                          inputText: "Recomendações:",
+                          icon: Icons.recommend,
+                          color: Colors.blue,
+                          recomendations: vm.message['recommendations'],
                         ),
                       ],
                     );
