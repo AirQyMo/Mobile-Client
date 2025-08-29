@@ -37,8 +37,8 @@ class HomePageComponent extends StatelessWidget {
               child: Center(
                 child: Text(
                   inputText,
-                  textAlign: TextAlign.justify,
-                  style: TextStyle(fontSize: 20),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 22),
                 ),
               ),
             ),

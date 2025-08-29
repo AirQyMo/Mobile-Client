@@ -43,8 +43,8 @@ class RecomendationsComponent extends StatelessWidget {
                 children: [
                   Text(
                     inputText,
-                    textAlign: TextAlign.justify,
-                    style: const TextStyle(fontSize: 20),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 22),
                   ),
                   SizedBox(height: 10),
                   SizedBox(
