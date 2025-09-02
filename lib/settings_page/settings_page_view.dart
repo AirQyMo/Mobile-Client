@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:plugin/plugin.dart';
 
 class SettingsPageView extends StatefulWidget {
-  const SettingsPageView({super.key});
+  const SettingsPageView({super.key, this.plugin});
+  final Plugin? plugin;
 
   @override
   State<SettingsPageView> createState() => _SettingsPageViewState();
 }
 
 class _SettingsPageViewState extends State<SettingsPageView> {
+  late Plugin plugin;
   late bool ble = false;
   late bool contextNetConnection = false;
+
+  @override
+  void initState() {
+    super.initState();
+    plugin = widget.plugin ?? Plugin();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,16 +38,15 @@ class _SettingsPageViewState extends State<SettingsPageView> {
                 children: [
                   Text('Ligar BLE'),
                   Switch(
+                    key: Key('BLE_switch'),
                     value: ble,
                     onChanged: (bool newValue) {
                       setState(() {
                         ble = newValue;
                         if (ble) {
-                          print('começou a escanear');
-                          // TODO: startHub()
+                          plugin.startMobileHub();
                         } else {
-                          print('parou de escanear');
-                          // TODO: stopHub()
+                          plugin.stopMobileHub();
                         }
                       });
                     },
@@ -52,21 +61,22 @@ class _SettingsPageViewState extends State<SettingsPageView> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text('Conectar ao ContextNet'),
-                  Switch(
-                    value: contextNetConnection,
-                    onChanged: (bool newValue) {
-                      setState(() {
-                        contextNetConnection = newValue;
-                        if (contextNetConnection) {
-                          print('começou a escanear');
-                          // TODO: startHub()
-                        } else {
-                          print('parou de escanear');
-                          // TODO: stopHub()
-                        }
-                      });
-                    },
-                  ),
+                  // Switch(
+                  //   key: Key('ContextNetConnection_switch'),
+                  //   value: contextNetConnection,
+                  //   onChanged: (bool newValue) {
+                  //     setState(() {
+                  //       contextNetConnection = newValue;
+                  //       if (contextNetConnection) {
+                  //         // TODO: replace with another function
+                  //         plugin.startMobileHub();
+                  //       } else {
+                  //         // TODO: replace with another function
+                  //         plugin.stopMobileHub();
+                  //       }
+                  //     });
+                  //   },
+                  // ),
                 ],
               ),
             ),
