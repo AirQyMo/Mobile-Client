@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:plugin/plugin_method_channel.dart';
 
@@ -17,7 +19,8 @@ class HomePageViewModel extends ChangeNotifier {
 
   _setupMessageListener() {
     _methodChannelPlugin.onMessageReceived.listen((novaMensagem) {
-      _mensagens.insert(0, novaMensagem);
+      var mensagemJson = jsonDecode(novaMensagem);
+      _mensagens.insert(0, mensagemJson);
       notifyListeners();
     });
   }

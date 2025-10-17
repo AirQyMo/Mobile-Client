@@ -105,6 +105,8 @@ class _HomePageViewState extends State<HomePageView> {
               ),
             ),
           ),
+          GroupMessageTopicComponent(mensagem: mensagem),
+          /*
           ChangeNotifierProvider(
             create: (context) => HomePageViewModel(),
             child: Consumer<HomePageViewModel>(
@@ -118,6 +120,7 @@ class _HomePageViewState extends State<HomePageView> {
               },
             ),
           ),
+          */
         ],
       ),
     );
