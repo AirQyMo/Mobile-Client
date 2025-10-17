@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_client/ble_devices_page/ble_devices_page_view_model.dart';
-import 'package:mobile_client/ble_devices_page/components/ble_device_banner.dart';
+import 'package:mobile_client/ui/ble_devices/view_models/ble_devices_page_view_model.dart';
+import 'package:mobile_client/ui/ble_devices/widgets/ble_device_banner.dart';
 import 'package:provider/provider.dart';
 // import 'package:mobile_hub_plugin/mobile_hub_plugin.dart';
 

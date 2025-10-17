@@ -41,14 +41,7 @@ class _SettingsPageViewState extends State<SettingsPageView> {
                     key: Key('BLE_switch'),
                     value: ble,
                     onChanged: (bool newValue) {
-                      setState(() {
-                        ble = newValue;
-                        if (ble) {
-                          plugin.startMobileHub();
-                        } else {
-                          plugin.stopMobileHub();
-                        }
-                      });
+                      setState(() {});
                     },
                   ),
                 ],

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mobile_client/mocks/mock_connection_status.dart';
 import 'package:mobile_client/mocks/mock_message_received.dart';
+import 'package:plugin/plugin_method_channel.dart';
 
 class HomePageViewModel extends ChangeNotifier {
   final MockConnectionStatus _mockConnectionStatus = MockConnectionStatus();
