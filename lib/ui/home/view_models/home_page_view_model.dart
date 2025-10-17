@@ -1,47 +1,24 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:mobile_client/mocks/mock_connection_status.dart';
-import 'package:mobile_client/mocks/mock_message_received.dart';
 import 'package:plugin/plugin_method_channel.dart';
 
 class HomePageViewModel extends ChangeNotifier {
-  final MockConnectionStatus _mockConnectionStatus = MockConnectionStatus();
-  StreamSubscription<String>? statusStreamSubscription;
-  String _connectionStatus = "DISCONNECTED";
+  final List<Map<dynamic, dynamic>> _mensagens = [];
+  List<Map<dynamic, dynamic>> get mensagens => List.unmodifiable(_mensagens);
+  final MethodChannelPlugin _methodChannelPlugin;
 
-  final MockMessageReceived _mockMessageReceived = MockMessageReceived();
-  StreamSubscription<Map<String, dynamic>>? messageStreamSubscription;
-  Map<String, dynamic> _message = {};
-
-  String get connectionStatus => _connectionStatus;
-  Map<String, dynamic> get message => _message;
-
-  void startConnectionStatus() {
-    _mockConnectionStatus.connectionCycle();
-    notifyListeners();
-    statusStreamSubscription = _mockConnectionStatus.onConnectionStatusChanged
-        .listen((status) {
-          _connectionStatus = status;
-          notifyListeners();
-        });
+  HomePageViewModel() : _methodChannelPlugin = MethodChannelPlugin() {
+    _setupMessageListener();
   }
 
-  void receiveMessage() {
-    _mockMessageReceived.receiveMessage();
-    notifyListeners();
-    messageStreamSubscription = _mockMessageReceived.onMessageReceived.listen((
-      message,
-    ) {
-      _message = message;
+  @visibleForTesting
+  HomePageViewModel.setMock(this._methodChannelPlugin) {
+    _setupMessageListener();
+  }
+
+  _setupMessageListener() {
+    _methodChannelPlugin.onMessageReceived.listen((novaMensagem) {
+      _mensagens.insert(0, novaMensagem);
       notifyListeners();
     });
-  }
-
-  @override
-  void dispose() {
-    statusStreamSubscription?.cancel();
-    messageStreamSubscription?.cancel();
-    super.dispose();
   }
 }

@@ -14,21 +14,31 @@ class HomePageView extends StatefulWidget {
 
 class _HomePageViewState extends State<HomePageView> {
   late HomePageViewModel homePageViewModel;
-
-  final Map<String, dynamic> mensagem = {
-    'titulo': 'Mensagem do grupo',
-    'horario': '22:30',
-    'prioridade': 'baixa',
-    'poluentes': [
+  final Map<dynamic, dynamic> mensagem = {
+    "alert_id": "alert_1706798417002",
+    "timestamp": "2025-10-01T22:40:17.002-03:00",
+    "sensores": [
       {
-        'nome': 'PM2.5',
-        'prioridade': 'moderada',
-        'efeitos': ['asma', 'bronquite', 'irritação respiratória'],
-      },
-      {
-        'nome': 'PM4',
-        'prioridade': 'alta',
-        'efeitos': ['irritação respiratória', 'inflamação sistêmica leve'],
+        "sensor_id": "IAQ_6227821",
+        "poluentes": [
+          {
+            "poluente": "pm25",
+            "risk_level": "moderate",
+            "affected_diseases": {
+              "disease": ["asma", "bronquite", "irritação respiratória"],
+            },
+          },
+          {
+            "poluente": "pm4",
+            "risk_level": "high",
+            "affected_diseases": {
+              "disease": [
+                "irritação respiratória",
+                "inflamação sistêmica leve",
+              ],
+            },
+          },
+        ],
       },
     ],
   };
@@ -37,8 +47,6 @@ class _HomePageViewState extends State<HomePageView> {
   void initState() {
     super.initState();
     homePageViewModel = HomePageViewModel();
-    homePageViewModel.startConnectionStatus();
-    homePageViewModel.receiveMessage();
   }
 
   @override
@@ -97,7 +105,19 @@ class _HomePageViewState extends State<HomePageView> {
               ),
             ),
           ),
-          GroupMessageTopicComponent(mensagem: mensagem),
+          ChangeNotifierProvider(
+            create: (context) => HomePageViewModel(),
+            child: Consumer<HomePageViewModel>(
+              builder: (context, viewModel, child) {
+                return ListView.builder(
+                  itemCount: viewModel.mensagens.length,
+                  itemBuilder: (context, index) {
+                    return GroupMessageTopicComponent(mensagem: mensagem);
+                  },
+                );
+              },
+            ),
+          ),
         ],
       ),
     );

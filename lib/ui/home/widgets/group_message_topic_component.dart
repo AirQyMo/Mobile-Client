@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class GroupMessageTopicComponent extends StatelessWidget {
-  final Map<String, dynamic> mensagem;
+  final Map<dynamic, dynamic> mensagem;
 
   const GroupMessageTopicComponent({super.key, required this.mensagem});
 
@@ -25,26 +26,47 @@ class GroupMessageTopicComponent extends StatelessWidget {
       child: Column(
         children: [
           Titulo(
-            horario: mensagem['horario'],
-            prioridade: mensagem['prioridade'],
+            nome: mensagem['alert_id'],
+            horario: DateFormat(
+              'HH:mm:ss',
+            ).format(DateTime.parse(mensagem['timestamp'])),
           ),
           Column(
-            children: List.generate(
-              mensagem['poluentes'].length,
-              (index) => Column(
-                children: [
-                  Divider(),
-                  PoluenteWidget(
-                    nome: mensagem['poluentes'][index]['nome'],
-                    prioridade: mensagem['poluentes'][index]['prioridade'],
-                    efeitos: mensagem['poluentes'][index]['efeitos'],
-                  ),
-                ],
-              ),
-            ),
+            children: mensagem['sensores'].map<Widget>((sensor) {
+              return SensorWidget(dadosSensor: sensor);
+            }).toList(),
           ),
         ],
       ),
+    );
+  }
+}
+
+class SensorWidget extends StatelessWidget {
+  final Map<dynamic, dynamic> dadosSensor;
+
+  const SensorWidget({super.key, required this.dadosSensor});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Divider(),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: Text(
+            dadosSensor['sensor_id'],
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        ),
+        ...dadosSensor['poluentes'].map((poluente) {
+          return PoluenteWidget(
+            nome: poluente['poluente'],
+            prioridade: poluente['risk_level'],
+            efeitos: poluente['affected_diseases']['disease'],
+          );
+        }),
+      ],
     );
   }
 }
@@ -166,17 +188,17 @@ class PrioridadeWidget extends StatelessWidget {
 
   Map<String, Color> _getCores() {
     switch (prioridade) {
-      case 'alta':
+      case 'high':
         return {
           'fundo': Color(0xfffee2e1),
           'fonte': Color.fromARGB(255, 138, 38, 31),
         };
-      case 'moderada':
+      case 'moderate':
         return {
           'fundo': Color(0xfffef3c4),
           'fonte': Color.fromARGB(255, 151, 134, 57),
         };
-      case 'baixa':
+      case 'low':
         return {'fundo': Color(0xffdbfde5), 'fonte': Colors.green};
       default:
         return {'fundo': Colors.grey, 'fonte': Colors.black};
@@ -203,9 +225,9 @@ class PrioridadeWidget extends StatelessWidget {
 
 class Titulo extends StatelessWidget {
   final String horario;
-  final String prioridade;
+  final String nome;
 
-  const Titulo({super.key, required this.prioridade, required this.horario});
+  const Titulo({super.key, required this.horario, required this.nome});
 
   @override
   Widget build(BuildContext context) {
@@ -218,7 +240,7 @@ class Titulo extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Mensagem do grupo",
+              nome,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16),
             ),
@@ -229,7 +251,6 @@ class Titulo extends StatelessWidget {
           ],
         ),
         Spacer(),
-        PrioridadeWidget(prioridade: prioridade),
       ],
     );
   }
