@@ -1,14 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:plugin/plugin_method_channel.dart';
+import 'package:plugin/plugin.dart';
 
 class HomePageViewModel extends ChangeNotifier {
   final List<Map<dynamic, dynamic>> _mensagens = [];
   List<Map<dynamic, dynamic>> get mensagens => List.unmodifiable(_mensagens);
-  final MethodChannelPlugin _methodChannelPlugin;
+  final Plugin _methodChannelPlugin;
 
-  HomePageViewModel() : _methodChannelPlugin = MethodChannelPlugin() {
+  HomePageViewModel() : _methodChannelPlugin = Plugin() {
     _setupMessageListener();
   }
 

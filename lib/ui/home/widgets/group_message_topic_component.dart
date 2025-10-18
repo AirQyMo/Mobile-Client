@@ -32,9 +32,9 @@ class GroupMessageTopicComponent extends StatelessWidget {
             ).format(DateTime.parse(mensagem['timestamp'])),
           ),
           Column(
-            children: mensagem['sensores'].map<Widget>((sensor) {
-              return SensorWidget(dadosSensor: sensor);
-            }).toList(),
+            children: mensagem['sensores']
+                .map<Widget>((sensor) => SensorWidget(dadosSensor: sensor))
+                .toList(),
           ),
         ],
       ),
@@ -52,18 +52,18 @@ class SensorWidget extends StatelessWidget {
     return Column(
       children: [
         Divider(),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5),
-          child: Text(
-            dadosSensor['sensor_id'],
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
+        Text(
+          "Sensor: ${dadosSensor['sensor_id']}",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         ...dadosSensor['poluentes'].map((poluente) {
-          return PoluenteWidget(
-            nome: poluente['poluente'],
-            prioridade: poluente['risk_level'],
-            efeitos: poluente['affected_diseases']['disease'],
+          return Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: PoluenteWidget(
+              nome: poluente['poluente'],
+              prioridade: poluente['risk_level'],
+              efeitos: poluente['affected_diseases']['disease'],
+            ),
           );
         }),
       ],

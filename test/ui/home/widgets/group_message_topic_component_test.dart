@@ -42,6 +42,36 @@ void main() {
     );
 
     expect(find.text('01:40:17'), findsOneWidget);
+    expect(find.textContaining(mensagem['alert_id']), findsOneWidget);
+
+    var sensor = mensagem['sensores'][0];
+    expect(
+      find.textContaining(sensor['sensor_id'], findRichText: true),
+      findsOneWidget,
+    );
+
+    var poluente = sensor['poluentes'][0];
+    expect(
+      find.textContaining(poluente['poluente'], findRichText: true),
+      findsOneWidget,
+    );
+    expect(find.textContaining(poluente['risk_level']), findsOneWidget);
+
+    var efeitos = poluente['affected_diseases']['disease'];
+    expect(find.textContaining(efeitos[0]), findsAtLeast(1));
+    expect(find.textContaining(efeitos[1]), findsAtLeast(1));
+    expect(find.textContaining(efeitos[2]), findsAtLeast(1));
+
+    poluente = sensor['poluentes'][1];
+    expect(
+      find.textContaining(poluente['poluente'], findRichText: true),
+      findsOneWidget,
+    );
+    expect(find.textContaining(poluente['risk_level']), findsOneWidget);
+
+    efeitos = poluente['affected_diseases']['disease'];
+    expect(find.textContaining(efeitos[0]), findsAtLeast(1));
+    expect(find.textContaining(efeitos[1]), findsAtLeast(1));
   });
 
   group('prioridade widget', () {
@@ -60,6 +90,7 @@ void main() {
       expect(text.style!.color, Color.fromARGB(255, 138, 38, 31));
       expect(find.text('high'), findsOneWidget);
     });
+
     testWidgets('moderate', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -75,6 +106,7 @@ void main() {
       expect(text.style!.color, Color.fromARGB(255, 151, 134, 57));
       expect(find.text('moderate'), findsOneWidget);
     });
+
     testWidgets('low', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -89,6 +121,26 @@ void main() {
       expect(boxDecoration.color, Color(0xffdbfde5));
       expect(text.style!.color, Colors.green);
       expect(find.text('low'), findsOneWidget);
+    });
+
+    testWidgets('default', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PrioridadeWidget(
+              prioridade: 'qualquer coisa para cair em default',
+            ),
+          ),
+        ),
+      );
+
+      final container = tester.widget<Container>(find.byType(Container).last);
+      final boxDecoration = container.decoration as BoxDecoration;
+      final text = tester.widget<Text>(find.byType(Text));
+
+      expect(boxDecoration.color, Colors.grey);
+      expect(text.style!.color, Colors.black);
+      expect(find.text('qualquer coisa para cair em default'), findsOneWidget);
     });
   });
 }
