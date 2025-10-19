@@ -25,6 +25,10 @@ void main() {
   });
 
   tearDown(() => streamController.close());
+
+  test('inicializa com plugin padrão', () {
+    expect(() => HomePageViewModel(), returnsNormally);
+  });
   test('lista inicia vazia', () {
     expect(homePageViewModel.mensagens, isEmpty);
   });
