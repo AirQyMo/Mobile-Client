@@ -22,6 +22,18 @@ class _SettingsPageViewState extends State<SettingsPageView> {
     settingsViewModel = widget.settingsViewModel ?? SettingsViewModel();
   }
 
+  void _showSnackBar(BuildContext context, String message, bool isError) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? Colors.red : Colors.green,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,17 +86,21 @@ class _SettingsPageViewState extends State<SettingsPageView> {
               Column(
                 children: [
                   ElevatedButton(
-                    onPressed: () {
-                      settingsViewModel.startMobileHub(
+                    onPressed: () async {
+                      final result = await settingsViewModel.startMobileHub(
                         ipAddressController.text,
                         portController.text,
                       );
+
+                      _showSnackBar(context, result.message, !result.success);
                     },
                     child: Text('Iniciar Mobile Hub'),
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      settingsViewModel.stopMobileHub();
+                    onPressed: () async {
+                      final result = await settingsViewModel.stopMobileHub();
+
+                      _showSnackBar(context, result.message, !result.success);
                     },
                     child: Text('Para Mobile Hub'),
                   ),

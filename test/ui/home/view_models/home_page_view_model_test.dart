@@ -9,6 +9,7 @@ import 'package:plugin/plugin.dart';
 class MockMethodChannelPlugin extends Mock implements Plugin {}
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   late HomePageViewModel homePageViewModel;
   late MockMethodChannelPlugin mockMethodChannelPlugin;
   late StreamController<String> streamController;
