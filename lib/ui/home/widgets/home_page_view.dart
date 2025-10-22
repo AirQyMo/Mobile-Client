@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_client/ui/ble_devices/widgets/ble_devices_page_view.dart';
 import 'package:mobile_client/ui/home/widgets/group_message_topic_component.dart';
 import 'package:mobile_client/ui/home/view_models/home_page_view_model.dart';
 import 'package:mobile_client/ui/settings/widgets/settings_page_view.dart';
 import 'package:provider/provider.dart';
 
 class HomePageView extends StatefulWidget {
-  const HomePageView({super.key});
+  @visibleForTesting
+  final HomePageViewModel? homePageViewModel;
+
+  const HomePageView({super.key, this.homePageViewModel});
 
   @override
   State<HomePageView> createState() => _HomePageViewState();
@@ -18,7 +20,7 @@ class _HomePageViewState extends State<HomePageView> {
   @override
   void initState() {
     super.initState();
-    homePageViewModel = HomePageViewModel();
+    homePageViewModel = widget.homePageViewModel ?? HomePageViewModel();
   }
 
   @override
@@ -77,38 +79,11 @@ class _HomePageViewState extends State<HomePageView> {
           ),
         ),
       ),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(child: Text('Menu', style: TextStyle(fontSize: 24))),
-            ListTile(
-              leading: const Icon(Icons.bluetooth_sharp),
-              title: const Text('Dispositivos BLE'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => BleDevicesPageView()),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Configurações'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SettingsPageView()),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
       body: Column(
         spacing: 10,
         children: [
           ChangeNotifierProvider(
-            create: (context) => HomePageViewModel(),
+            create: (context) => homePageViewModel,
             child: Consumer<HomePageViewModel>(
               builder: (context, viewModel, child) {
                 return Expanded(
