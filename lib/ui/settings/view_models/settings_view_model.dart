@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:plugin/plugin.dart';
 
 class SettingsViewModel extends ChangeNotifier {
@@ -16,6 +17,15 @@ class SettingsViewModel extends ChangeNotifier {
     String port,
   ) async {
     try {
+      var status = await Permission.location.request();
+      if (!status.isGranted) {
+        return (success: false, message: "Permissão de localização negada");
+      }
+
+      if (await Permission.notification.isDenied) {
+        await Permission.notification.request();
+      }
+
       RegExp exp = RegExp(
         r'\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b',
       );
