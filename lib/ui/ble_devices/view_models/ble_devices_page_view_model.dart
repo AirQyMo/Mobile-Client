@@ -1,45 +1,37 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:mobile_client/mocks/mock_ble_service.dart';
+import 'package:plugin/plugin.dart';
 
 class BleDevicesPageViewModel extends ChangeNotifier {
-  final MockBleService _mockBleService = MockBleService();
-  final List<Map<String, dynamic>> _discoveredDevices = [];
-  StreamSubscription<Map<String, dynamic>>? _deviceSubscription;
+  final Plugin _plugin;
+  final List<Map<dynamic, dynamic>> _devicesList = [];
+  List<Map<dynamic, dynamic>> get devices => _devicesList;
 
-  List<Map<String, dynamic>> get discoveredDevices =>
-      List.unmodifiable(_discoveredDevices);
+  BleDevicesPageViewModel() : _plugin = Plugin() {
+    _listenToBLEStreams();
+  }
 
-  void startDeviceDiscovery() {
-    _deviceSubscription = _mockBleService.onBleDeviceDiscovered.listen((
-      device,
-    ) {
-      final deviceId = device['id'] ?? device['address'];
-      if (!_discoveredDevices.any(
-        (d) => (d['id'] ?? d['address']) == deviceId,
-      )) {
-        _discoveredDevices.add(device);
-        notifyListeners();
-      }
+  @visibleForTesting
+  BleDevicesPageViewModel.setMock(this._plugin) {
+    _listenToBLEStreams();
+    getBLEScanState();
+  }
+
+  void _listenToBLEStreams() {
+    print('recebendo');
+    _plugin.onBleDataReceived.listen((device) {
+      print(device);
+      _devicesList.add(device);
+      notifyListeners();
     });
-
-    _mockBleService.deviceDiscovery();
   }
 
-  void stopDeviceDiscovery() {
-    _deviceSubscription?.cancel();
-    _deviceSubscription = null;
+  void getBLEScanState() {
+    _plugin.onScanningStateChanged.listen((state) {
+      print('estado de escaneamento: $state');
+    });
   }
 
-  void clearDevices() {
-    _discoveredDevices.clear();
-    notifyListeners();
-  }
-
-  @override
-  void dispose() {
-    _deviceSubscription?.cancel();
-    super.dispose();
+  Future<bool?> getMobileHubState() async {
+    return await _plugin.isMobileHubStarted();
   }
 }

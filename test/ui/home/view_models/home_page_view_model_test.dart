@@ -11,18 +11,19 @@ class MockMethodChannelPlugin extends Mock implements Plugin {}
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late HomePageViewModel homePageViewModel;
-  late MockMethodChannelPlugin mockMethodChannelPlugin;
+  late MockMethodChannelPlugin mockPlugin;
   late StreamController<String> streamController;
 
   setUp(() {
-    mockMethodChannelPlugin = MockMethodChannelPlugin();
+    mockPlugin = MockMethodChannelPlugin();
     streamController = StreamController<String>();
 
     when(
-      () => mockMethodChannelPlugin.onMessageReceived,
+      () => mockPlugin.onMessageReceived,
     ).thenAnswer((_) => streamController.stream);
+    when(() => mockPlugin.isMobileHubStarted()).thenAnswer((_) async => true);
 
-    homePageViewModel = HomePageViewModel.setMock(mockMethodChannelPlugin);
+    homePageViewModel = HomePageViewModel.setMock(mockPlugin);
   });
 
   tearDown(() => streamController.close());
@@ -42,5 +43,21 @@ void main() {
 
     expect(homePageViewModel.mensagens, hasLength(1));
     expect(homePageViewModel.mensagens.first, jsonDecode(mensagem));
+  });
+
+  group('mobile hub desligado?', () {
+    test('sim', () async {
+      final result = await mockPlugin.isMobileHubStarted();
+      expect(result, true);
+    });
+
+    test('não', () async {
+      when(
+        () => mockPlugin.isMobileHubStarted(),
+      ).thenAnswer((_) async => false);
+
+      final result = await mockPlugin.isMobileHubStarted();
+      expect(result, false);
+    });
   });
 }

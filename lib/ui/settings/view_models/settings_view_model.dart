@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:plugin/plugin.dart';
 
@@ -29,6 +31,7 @@ class SettingsViewModel extends ChangeNotifier {
       await _plugin.startMobileHub(ipAddress: ipAddress, port: intPort);
       return (success: true, message: "Mobile Hub iniciado com sucesso");
     } catch (e) {
+      log("$e");
       return (success: false, message: "Falha ao iniciar o Mobile Hub: $e");
     }
   }

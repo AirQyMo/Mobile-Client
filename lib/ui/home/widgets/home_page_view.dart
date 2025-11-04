@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_client/ui/ble_devices/widgets/ble_devices_page_view.dart';
 import 'package:mobile_client/ui/home/widgets/group_message_topic_component.dart';
 import 'package:mobile_client/ui/home/view_models/home_page_view_model.dart';
 import 'package:mobile_client/ui/settings/widgets/settings_page_view.dart';
@@ -53,6 +54,19 @@ class _HomePageViewState extends State<HomePageView> {
                   },
                   child: Row(
                     children: [Icon(Icons.settings), Text('Configurações')],
+                  ),
+                ),
+                MenuItemButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BleDevicesPageView(),
+                      ),
+                    );
+                  },
+                  child: Row(
+                    children: [Icon(Icons.bluetooth), Text('Dispositivos BLE')],
                   ),
                 ),
               ],
