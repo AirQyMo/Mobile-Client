@@ -4,26 +4,36 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:plugin/plugin.dart';
 
+class PermissionService {
+  Future<PermissionStatus> requestLocation() => Permission.location.request();
+  Future<bool> isNotificationDenied() => Permission.notification.isDenied;
+  Future<PermissionStatus> requestNotification() =>
+      Permission.notification.request();
+}
+
 class SettingsViewModel extends ChangeNotifier {
   final Plugin _plugin;
+  final PermissionService _permissionService;
 
-  SettingsViewModel() : _plugin = Plugin();
+  SettingsViewModel()
+    : _plugin = Plugin(),
+      _permissionService = PermissionService();
 
   @visibleForTesting
-  SettingsViewModel.setMock(this._plugin);
+  SettingsViewModel.setMock(this._plugin, this._permissionService);
 
   Future<({bool success, String message})> startMobileHub(
     String ipAddress,
     String port,
   ) async {
     try {
-      var status = await Permission.location.request();
+      var status = await _permissionService.requestLocation();
       if (!status.isGranted) {
         return (success: false, message: "Permissão de localização negada");
       }
 
-      if (await Permission.notification.isDenied) {
-        await Permission.notification.request();
+      if (await _permissionService.isNotificationDenied()) {
+        await _permissionService.requestNotification();
       }
 
       RegExp exp = RegExp(
