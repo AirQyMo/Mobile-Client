@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:plugin/plugin.dart';
@@ -30,6 +31,7 @@ class HomePageViewModel extends ChangeNotifier {
 
   void _setupMessageListener() {
     _plugin.onMessageReceived.listen((novaMensagem) {
+      log('recebeu alerta');
       var mensagemJson = jsonDecode(novaMensagem);
       _mensagens.insert(0, mensagemJson);
       notifyListeners();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_client/ui/ble_devices/view_models/ble_devices_page_view_model.dart';
+import 'package:mobile_client/ui/ble_devices/widgets/ble_device_banner.dart';
 import 'package:provider/provider.dart';
 
 class BleDevicesPageView extends StatefulWidget {
@@ -28,7 +29,11 @@ class _BleDevicesPageViewState extends State<BleDevicesPageView> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text(
           "Dispositivos BLE",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         flexibleSpace: Container(
           decoration: BoxDecoration(
@@ -47,12 +52,25 @@ class _BleDevicesPageViewState extends State<BleDevicesPageView> {
             create: (context) => bleDevicesPageViewModel,
             child: Consumer<BleDevicesPageViewModel>(
               builder: (context, value, child) {
+                if (value.devices.isEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Sem dispositivos nas proximidades',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                  );
+                }
                 return Expanded(
                   child: ListView.builder(
                     itemCount: bleDevicesPageViewModel.devices.length,
                     itemBuilder: (context, index) {
-                      return Text(
-                        bleDevicesPageViewModel.devices[index]['name'],
+                      return BleDeviceBanner(
+                        name: value.devices[index]['name'],
+                        uuid: value.devices[index]['uuid'],
+                        rssi: value.devices[index]['rssi'],
                       );
                     },
                   ),

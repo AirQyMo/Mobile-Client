@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mobile_client/ui/ble_devices/widgets/ble_devices_page_view.dart';
 import 'package:mobile_client/ui/settings/widgets/settings_page_view.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:mobile_client/ui/home/view_models/home_page_view_model.dart';
@@ -33,6 +34,17 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(SettingsPageView), findsOneWidget);
+  });
+
+  testWidgets('vai para a tela de dispositivos ble', (tester) async {
+    await tester.pumpWidget(MaterialApp(home: HomePageView()));
+
+    await tester.tap(find.byIcon(Icons.menu));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Dispositivos BLE'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BleDevicesPageView), findsOneWidget);
   });
 
   testWidgets('lista as mensagens', (tester) async {

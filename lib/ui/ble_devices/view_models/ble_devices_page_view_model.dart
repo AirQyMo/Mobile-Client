@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:plugin/plugin.dart';
 
 class BleDevicesPageViewModel extends ChangeNotifier {
   final Plugin _plugin;
   final List<Map<dynamic, dynamic>> _devicesList = [];
+  final List<String> _uuidList = [];
   List<Map<dynamic, dynamic>> get devices => _devicesList;
 
   BleDevicesPageViewModel() : _plugin = Plugin() {
@@ -16,12 +19,16 @@ class BleDevicesPageViewModel extends ChangeNotifier {
     getBLEScanState();
   }
 
-  void _listenToBLEStreams() {
-    print('recebendo');
+  void _listenToBLEStreams() async {
+    await _plugin.startListening();
+
     _plugin.onBleDataReceived.listen((device) {
-      print(device);
-      _devicesList.add(device);
-      notifyListeners();
+      var uuid = device['uuid'];
+      if (uuid != null && !_uuidList.contains(uuid)) {
+        _devicesList.add(device);
+        _uuidList.add(uuid);
+        notifyListeners();
+      }
     });
   }
 

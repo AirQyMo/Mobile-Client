@@ -39,7 +39,14 @@ class _SettingsPageViewState extends State<SettingsPageView> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Configurações", style: TextStyle(color: Colors.white)),
+        title: Text(
+          "Configurações",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(

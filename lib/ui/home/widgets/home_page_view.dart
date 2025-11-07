@@ -100,6 +100,17 @@ class _HomePageViewState extends State<HomePageView> {
             create: (context) => homePageViewModel,
             child: Consumer<HomePageViewModel>(
               builder: (context, viewModel, child) {
+                if (viewModel.mensagens.isEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Não há alertas no momento',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                  );
+                }
                 return Expanded(
                   child: ListView.builder(
                     itemCount: viewModel.mensagens.length,
