@@ -12,15 +12,22 @@ class PermissionService {
 }
 
 class SettingsViewModel extends ChangeNotifier {
+  static final SettingsViewModel _instance = SettingsViewModel._internal();
+  factory SettingsViewModel() => _instance;
+  SettingsViewModel._internal()
+    : _plugin = Plugin(),
+      _permissionService = PermissionService() {
+    _checkMobileHubStatus();
+  }
+
+  String ipAddress = '';
+  String port = '';
+
   final Plugin _plugin;
   final PermissionService _permissionService;
 
   bool _isMobileHubStarted = false;
   bool get isMobileHubStarted => _isMobileHubStarted;
-
-  SettingsViewModel()
-    : _plugin = Plugin(),
-      _permissionService = PermissionService();
 
   @visibleForTesting
   SettingsViewModel.setMock(this._plugin, this._permissionService);

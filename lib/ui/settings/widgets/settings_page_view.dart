@@ -20,6 +20,11 @@ class _SettingsPageViewState extends State<SettingsPageView> {
   void initState() {
     super.initState();
     settingsViewModel = widget.settingsViewModel ?? SettingsViewModel();
+
+    if (settingsViewModel.isMobileHubStarted) {
+      ipAddressController.text = settingsViewModel.ipAddress;
+      portController.text = settingsViewModel.port;
+    }
   }
 
   void _showSnackBar(String message, bool isError) {
@@ -102,6 +107,9 @@ class _SettingsPageViewState extends State<SettingsPageView> {
                       ElevatedButton(
                         onPressed: !mobileHubStarted
                             ? () async {
+                                settingsViewModel.ipAddress =
+                                    ipAddressController.text;
+                                settingsViewModel.port = portController.text;
                                 final result = await settingsViewModel
                                     .startMobileHub(
                                       ipAddressController.text,
