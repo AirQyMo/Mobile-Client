@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 class BleDevicesPageView extends StatefulWidget {
   @visibleForTesting
   final BleDevicesPageViewModel? bleDevicesPageViewModel;
+
   const BleDevicesPageView({super.key, this.bleDevicesPageViewModel});
 
   @override
@@ -67,11 +68,7 @@ class _BleDevicesPageViewState extends State<BleDevicesPageView> {
                   child: ListView.builder(
                     itemCount: bleDevicesPageViewModel.devices.length,
                     itemBuilder: (context, index) {
-                      return BleDeviceBanner(
-                        name: value.devices[index]['name'],
-                        uuid: value.devices[index]['uuid'],
-                        rssi: value.devices[index]['rssi'],
-                      );
+                      return BleDeviceBanner(device: value.devices[index]);
                     },
                   ),
                 );

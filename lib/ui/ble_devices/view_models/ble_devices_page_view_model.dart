@@ -16,7 +16,6 @@ class BleDevicesPageViewModel extends ChangeNotifier {
   @visibleForTesting
   BleDevicesPageViewModel.setMock(this._plugin) {
     _listenToBLEStreams();
-    getBLEScanState();
   }
 
   void _listenToBLEStreams() async {
@@ -29,12 +28,6 @@ class BleDevicesPageViewModel extends ChangeNotifier {
         _uuidList.add(uuid);
         notifyListeners();
       }
-    });
-  }
-
-  void getBLEScanState() {
-    _plugin.onScanningStateChanged.listen((state) {
-      print('estado de escaneamento: $state');
     });
   }
 
