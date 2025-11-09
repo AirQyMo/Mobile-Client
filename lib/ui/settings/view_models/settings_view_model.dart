@@ -15,12 +15,20 @@ class SettingsViewModel extends ChangeNotifier {
   final Plugin _plugin;
   final PermissionService _permissionService;
 
+  bool _isMobileHubStarted = false;
+  bool get isMobileHubStarted => _isMobileHubStarted;
+
   SettingsViewModel()
     : _plugin = Plugin(),
       _permissionService = PermissionService();
 
   @visibleForTesting
   SettingsViewModel.setMock(this._plugin, this._permissionService);
+
+  Future<void> _checkMobileHubStatus() async {
+    _isMobileHubStarted = await _plugin.isMobileHubStarted() ?? false;
+    notifyListeners();
+  }
 
   Future<({bool success, String message})> startMobileHub(
     String ipAddress,
@@ -49,6 +57,7 @@ class SettingsViewModel extends ChangeNotifier {
       }
 
       await _plugin.startMobileHub(ipAddress: ipAddress, port: intPort);
+      await _checkMobileHubStatus();
       return (success: true, message: "Mobile Hub iniciado com sucesso");
     } catch (e) {
       log("$e");
@@ -59,6 +68,7 @@ class SettingsViewModel extends ChangeNotifier {
   Future<({bool success, String message})> stopMobileHub() async {
     try {
       await _plugin.stopMobileHub();
+      await _checkMobileHubStatus();
       return (success: true, message: "Mobile Hub interrompido");
     } catch (e) {
       return (success: false, message: "Falha ao interromper o Mobile Hub: $e");

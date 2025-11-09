@@ -58,68 +58,89 @@ class _SettingsPageViewState extends State<SettingsPageView> {
           ),
         ),
       ),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.sizeOf(context).width * 0.2,
-          ),
-          child: Column(
-            spacing: 20,
-            children: [
-              Column(
-                children: [
-                  Row(children: [Text('Endereço de IP')]),
-                  TextField(
-                    key: Key('input ip address'),
-                    controller: ipAddressController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ],
-              ),
-              Column(
-                children: [
-                  Row(children: [Text('Port')]),
-                  TextField(
-                    key: Key('input port'),
-                    controller: portController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ],
-              ),
-              Column(
-                children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      final result = await settingsViewModel.startMobileHub(
-                        ipAddressController.text,
-                        portController.text,
-                      );
+      body: AnimatedBuilder(
+        animation: settingsViewModel,
+        builder: (context, _) {
+          final mobileHubStarted = settingsViewModel.isMobileHubStarted;
 
-                      if (mounted) {
-                        _showSnackBar(result.message, !result.success);
-                      }
-                    },
-                    child: const Text('Iniciar Mobile Hub'),
+          return Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.sizeOf(context).width * 0.2,
+              ),
+              child: Column(
+                spacing: 20,
+                children: [
+                  Column(
+                    children: [
+                      Row(children: [Text('Endereço de IP')]),
+                      TextField(
+                        key: Key('input ip address'),
+                        controller: ipAddressController,
+                        enabled: !mobileHubStarted,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ],
                   ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      final result = await settingsViewModel.stopMobileHub();
+                  Column(
+                    children: [
+                      Row(children: [Text('Port')]),
+                      TextField(
+                        key: Key('input port'),
+                        controller: portController,
+                        enabled: !mobileHubStarted,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      ElevatedButton(
+                        onPressed: !mobileHubStarted
+                            ? () async {
+                                final result = await settingsViewModel
+                                    .startMobileHub(
+                                      ipAddressController.text,
+                                      portController.text,
+                                    );
 
-                      if (mounted) {
-                        _showSnackBar(result.message, !result.success);
-                      }
-                    },
-                    child: const Text('Para Mobile Hub'),
+                                if (mounted) {
+                                  _showSnackBar(
+                                    result.message,
+                                    !result.success,
+                                  );
+                                }
+                              }
+                            : null,
+                        child: const Text('Iniciar Mobile Hub'),
+                      ),
+                      ElevatedButton(
+                        onPressed: mobileHubStarted
+                            ? () async {
+                                final result = await settingsViewModel
+                                    .stopMobileHub();
+
+                                if (mounted) {
+                                  _showSnackBar(
+                                    result.message,
+                                    !result.success,
+                                  );
+                                }
+                              }
+                            : null,
+                        child: const Text('Parar Mobile Hub'),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
