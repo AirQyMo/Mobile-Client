@@ -65,6 +65,7 @@ class SettingsViewModel extends ChangeNotifier {
 
       await _plugin.startMobileHub(ipAddress: ipAddress, port: intPort);
       await _checkMobileHubStatus();
+      await _plugin.startListening();
       return (success: true, message: "Mobile Hub iniciado com sucesso");
     } catch (e) {
       log("$e");
@@ -76,6 +77,7 @@ class SettingsViewModel extends ChangeNotifier {
     try {
       await _plugin.stopMobileHub();
       await _checkMobileHubStatus();
+      await _plugin.stopListening();
       return (success: true, message: "Mobile Hub interrompido");
     } catch (e) {
       return (success: false, message: "Falha ao interromper o Mobile Hub: $e");

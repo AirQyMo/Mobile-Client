@@ -58,7 +58,9 @@ class _BleDevicesPageViewState extends State<BleDevicesPageView> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        'Sem dispositivos nas proximidades',
+                        bleDevicesPageViewModel.getMobileHubState()
+                            ? 'Sem dispositivos nas proximidades'
+                            : 'Scan BLE desligado',
                         style: TextStyle(fontSize: 20),
                       ),
                     ),

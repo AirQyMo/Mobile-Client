@@ -1,6 +1,5 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:mobile_client/ui/settings/view_models/settings_view_model.dart';
 import 'package:plugin/plugin.dart';
 
 class BleDevicesPageViewModel extends ChangeNotifier {
@@ -18,9 +17,7 @@ class BleDevicesPageViewModel extends ChangeNotifier {
     _listenToBLEStreams();
   }
 
-  void _listenToBLEStreams() async {
-    await _plugin.startListening();
-
+  void _listenToBLEStreams() {
     _plugin.onBleDataReceived.listen((device) {
       var uuid = device['uuid'];
       if (uuid != null && !_uuidList.contains(uuid)) {
@@ -31,7 +28,7 @@ class BleDevicesPageViewModel extends ChangeNotifier {
     });
   }
 
-  Future<bool?> getMobileHubState() async {
-    return await _plugin.isMobileHubStarted();
+  bool getMobileHubState() {
+    return SettingsViewModel().isMobileHubStarted;
   }
 }
