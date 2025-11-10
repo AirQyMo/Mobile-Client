@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_client/ui/home/view_models/home_page_view_model.dart';
 import 'package:mobile_client/ui/home/widgets/home_page_view.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +19,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF343E93)),
       ),
-      home: const HomePageView(),
+      home: ChangeNotifierProvider(
+        create: (_) => HomePageViewModel(),
+        child: const HomePageView(),
+      ),
     );
   }
 }

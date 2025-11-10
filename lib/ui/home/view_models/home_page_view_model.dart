@@ -2,12 +2,16 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:mobile_client/ui/settings/view_models/settings_view_model.dart';
 import 'package:plugin/plugin.dart';
 
 class HomePageViewModel extends ChangeNotifier {
   final List<Map<dynamic, dynamic>> _mensagens = [];
   List<Map<dynamic, dynamic>> get mensagens => List.unmodifiable(_mensagens);
   final Plugin _plugin;
+
+  bool _isMobileHubStarted = false;
+  bool get isMobileHubStarted => _isMobileHubStarted;
 
   HomePageViewModel() : _plugin = Plugin() {
     Future.microtask(init);
@@ -18,15 +22,14 @@ class HomePageViewModel extends ChangeNotifier {
     Future.microtask(init);
   }
 
-  Future<bool?> isMobileHubStarted() async {
-    return await _plugin.isMobileHubStarted();
-  }
-
   void init() async {
-    final mobileHubStarted = await isMobileHubStarted();
-    if (mobileHubStarted != null && mobileHubStarted) {
+    _isMobileHubStarted = SettingsViewModel().isMobileHubStarted;
+
+    if (_isMobileHubStarted) {
       _setupMessageListener();
     }
+
+    notifyListeners();
   }
 
   void _setupMessageListener() {
@@ -36,5 +39,10 @@ class HomePageViewModel extends ChangeNotifier {
       _mensagens.insert(0, mensagemJson);
       notifyListeners();
     });
+  }
+
+  void refreshMobileHubState() {
+    _isMobileHubStarted = SettingsViewModel().isMobileHubStarted;
+    notifyListeners();
   }
 }

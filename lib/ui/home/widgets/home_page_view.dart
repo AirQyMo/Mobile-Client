@@ -15,17 +15,34 @@ class HomePageView extends StatefulWidget {
   State<HomePageView> createState() => _HomePageViewState();
 }
 
-class _HomePageViewState extends State<HomePageView> {
+class _HomePageViewState extends State<HomePageView>
+    with WidgetsBindingObserver {
   late HomePageViewModel homePageViewModel;
 
   @override
   void initState() {
     super.initState();
-    homePageViewModel = widget.homePageViewModel ?? HomePageViewModel();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      homePageViewModel.refreshMobileHubState();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    homePageViewModel =
+        widget.homePageViewModel ??
+        Provider.of<HomePageViewModel>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -50,7 +67,9 @@ class _HomePageViewState extends State<HomePageView> {
                       MaterialPageRoute(
                         builder: (context) => SettingsPageView(),
                       ),
-                    );
+                    ).then((_) {
+                      homePageViewModel.refreshMobileHubState();
+                    });
                   },
                   child: Row(
                     children: [Icon(Icons.settings), Text('Configurações')],
@@ -96,33 +115,32 @@ class _HomePageViewState extends State<HomePageView> {
       body: Column(
         spacing: 10,
         children: [
-          ChangeNotifierProvider(
-            create: (context) => homePageViewModel,
-            child: Consumer<HomePageViewModel>(
-              builder: (context, viewModel, child) {
-                if (viewModel.mensagens.isEmpty) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Não há alertas no momento',
-                        style: TextStyle(fontSize: 20),
-                      ),
+          Consumer<HomePageViewModel>(
+            builder: (context, viewModel, child) {
+              if (viewModel.mensagens.isEmpty) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      viewModel.isMobileHubStarted
+                          ? 'Não há alertas no momento'
+                          : 'Sem conexão com o ContextNet',
+                      style: TextStyle(fontSize: 20),
                     ),
-                  );
-                }
-                return Expanded(
-                  child: ListView.builder(
-                    itemCount: viewModel.mensagens.length,
-                    itemBuilder: (context, index) {
-                      return GroupMessageTopicComponent(
-                        mensagem: viewModel.mensagens[index],
-                      );
-                    },
                   ),
                 );
-              },
-            ),
+              }
+              return Expanded(
+                child: ListView.builder(
+                  itemCount: viewModel.mensagens.length,
+                  itemBuilder: (context, index) {
+                    return GroupMessageTopicComponent(
+                      mensagem: viewModel.mensagens[index],
+                    );
+                  },
+                ),
+              );
+            },
           ),
         ],
       ),
