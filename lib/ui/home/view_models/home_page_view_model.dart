@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -9,6 +10,7 @@ class HomePageViewModel extends ChangeNotifier {
   final List<Map<dynamic, dynamic>> _mensagens = [];
   List<Map<dynamic, dynamic>> get mensagens => List.unmodifiable(_mensagens);
   final Plugin _plugin;
+  StreamSubscription? _streamSubscription;
 
   bool _isMobileHubStarted = false;
   bool get isMobileHubStarted => _isMobileHubStarted;
@@ -32,8 +34,14 @@ class HomePageViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  @override
+  void dispose() {
+    _streamSubscription?.cancel();
+    super.dispose();
+  }
+
   void _setupMessageListener() {
-    _plugin.onMessageReceived.listen((novaMensagem) {
+    _streamSubscription = _plugin.onMessageReceived.listen((novaMensagem) {
       log('recebeu alerta');
       var mensagemJson = jsonDecode(novaMensagem);
       _mensagens.insert(0, mensagemJson);
