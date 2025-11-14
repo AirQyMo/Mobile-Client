@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -28,6 +29,8 @@ class SettingsViewModel extends ChangeNotifier {
 
   bool _isMobileHubStarted = false;
   bool get isMobileHubStarted => _isMobileHubStarted;
+
+  Timer? _contextUpdatesTimer;
 
   @visibleForTesting
   SettingsViewModel.setMock(this._plugin, this._permissionService);
@@ -66,6 +69,7 @@ class SettingsViewModel extends ChangeNotifier {
       await _plugin.startMobileHub(ipAddress: ipAddress, port: intPort);
       await _checkMobileHubStatus();
       await _plugin.startListening();
+      await _sendContextUpdates();
       return (success: true, message: "Mobile Hub iniciado com sucesso");
     } catch (e) {
       log("$e");
@@ -75,6 +79,7 @@ class SettingsViewModel extends ChangeNotifier {
 
   Future<({bool success, String message})> stopMobileHub() async {
     try {
+      await _stopPeriodicUpdates();
       await _plugin.stopMobileHub();
       await _checkMobileHubStatus();
       await _plugin.stopListening();
@@ -82,5 +87,22 @@ class SettingsViewModel extends ChangeNotifier {
     } catch (e) {
       return (success: false, message: "Falha ao interromper o Mobile Hub: $e");
     }
+  }
+
+  Future<void> _sendContextUpdates() async {
+    _contextUpdatesTimer = Timer.periodic(const Duration(seconds: 3), (
+      _,
+    ) async {
+      List<String> uuid = ['e534231f-0734-45aa-b97b-b6bc613c0759'];
+      await _plugin.updateContext(devices: uuid);
+    });
+  }
+
+  Future<void> _stopPeriodicUpdates() async {
+    _contextUpdatesTimer?.cancel();
+    _contextUpdatesTimer = null;
+
+    print('cancelou timer');
+    return Future.value();
   }
 }

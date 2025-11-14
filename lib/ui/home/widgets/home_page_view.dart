@@ -131,13 +131,16 @@ class _HomePageViewState extends State<HomePageView>
                 );
               }
               return Expanded(
-                child: ListView.builder(
-                  itemCount: viewModel.mensagens.length,
-                  itemBuilder: (context, index) {
-                    return GroupMessageTopicComponent(
-                      mensagem: viewModel.mensagens[index],
-                    );
-                  },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListView.builder(
+                    itemCount: viewModel.mensagens.length,
+                    itemBuilder: (context, index) {
+                      return GroupMessageTopicComponent(
+                        mensagem: viewModel.mensagens[index],
+                      );
+                    },
+                  ),
                 ),
               );
             },
