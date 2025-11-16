@@ -18,7 +18,8 @@ class SettingsViewModel extends ChangeNotifier {
   factory SettingsViewModel() => _instance;
   SettingsViewModel._internal()
     : _plugin = Plugin(),
-      _permissionService = PermissionService() {
+      _permissionService = PermissionService(),
+      _messageService = MessageService() {
     _checkMobileHubStatus();
   }
 
@@ -27,6 +28,7 @@ class SettingsViewModel extends ChangeNotifier {
 
   final Plugin _plugin;
   final PermissionService _permissionService;
+  final MessageService _messageService;
 
   bool _isMobileHubStarted = false;
   bool get isMobileHubStarted => _isMobileHubStarted;
@@ -34,7 +36,11 @@ class SettingsViewModel extends ChangeNotifier {
   Timer? _contextUpdatesTimer;
 
   @visibleForTesting
-  SettingsViewModel.setMock(this._plugin, this._permissionService);
+  SettingsViewModel.setMock(
+    this._plugin,
+    this._permissionService,
+    this._messageService,
+  );
 
   Future<void> _checkMobileHubStatus() async {
     _isMobileHubStarted = await _plugin.isMobileHubStarted() ?? false;
@@ -69,9 +75,9 @@ class SettingsViewModel extends ChangeNotifier {
 
       await _plugin.startMobileHub(ipAddress: ipAddress, port: intPort);
       await _checkMobileHubStatus();
-      // await _plugin.startListening();
+      await _plugin.startListening();
       await _sendContextUpdates();
-      MessageService().startListening();
+      _messageService.startListening();
       return (success: true, message: "Mobile Hub iniciado com sucesso");
     } catch (e) {
       log("$e");
@@ -85,7 +91,7 @@ class SettingsViewModel extends ChangeNotifier {
       await _plugin.stopMobileHub();
       await _checkMobileHubStatus();
       await _plugin.stopListening();
-      MessageService().stopListening();
+      _messageService.stopListening();
       return (success: true, message: "Mobile Hub interrompido");
     } catch (e) {
       return (success: false, message: "Falha ao interromper o Mobile Hub: $e");
