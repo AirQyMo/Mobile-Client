@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:mobile_client/core/ble_devices_service.dart';
 import 'package:mobile_client/core/message_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:plugin/plugin.dart';
@@ -19,7 +20,8 @@ class SettingsViewModel extends ChangeNotifier {
   SettingsViewModel._internal()
     : _plugin = Plugin(),
       _permissionService = PermissionService(),
-      _messageService = MessageService() {
+      _messageService = MessageService(),
+      _bleDevicesService = BleDevicesService() {
     _checkMobileHubStatus();
   }
 
@@ -29,17 +31,17 @@ class SettingsViewModel extends ChangeNotifier {
   final Plugin _plugin;
   final PermissionService _permissionService;
   final MessageService _messageService;
+  final BleDevicesService _bleDevicesService;
 
   bool _isMobileHubStarted = false;
   bool get isMobileHubStarted => _isMobileHubStarted;
-
-  Timer? _contextUpdatesTimer;
 
   @visibleForTesting
   SettingsViewModel.setMock(
     this._plugin,
     this._permissionService,
     this._messageService,
+    this._bleDevicesService,
   );
 
   Future<void> _checkMobileHubStatus() async {
@@ -76,7 +78,7 @@ class SettingsViewModel extends ChangeNotifier {
       await _plugin.startMobileHub(ipAddress: ipAddress, port: intPort);
       await _checkMobileHubStatus();
       await _plugin.startListening();
-      await _sendContextUpdates();
+      _bleDevicesService.listenToBLEStreams();
       _messageService.startListening();
       return (success: true, message: "Mobile Hub iniciado com sucesso");
     } catch (e) {
@@ -87,30 +89,14 @@ class SettingsViewModel extends ChangeNotifier {
 
   Future<({bool success, String message})> stopMobileHub() async {
     try {
-      await _stopPeriodicUpdates();
       await _plugin.stopMobileHub();
       await _checkMobileHubStatus();
       await _plugin.stopListening();
+      _bleDevicesService.stopListeningToBLEStreams();
       _messageService.stopListening();
       return (success: true, message: "Mobile Hub interrompido");
     } catch (e) {
       return (success: false, message: "Falha ao interromper o Mobile Hub: $e");
     }
-  }
-
-  Future<void> _sendContextUpdates() async {
-    _contextUpdatesTimer = Timer.periodic(const Duration(seconds: 10), (
-      _,
-    ) async {
-      List<String> uuid = ['e534231f-0734-45aa-b97b-b6bc613c0759'];
-      await _plugin.updateContext(devices: uuid);
-    });
-  }
-
-  Future<void> _stopPeriodicUpdates() async {
-    _contextUpdatesTimer?.cancel();
-    _contextUpdatesTimer = null;
-
-    return Future.value();
   }
 }
