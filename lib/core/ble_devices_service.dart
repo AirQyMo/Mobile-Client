@@ -9,7 +9,7 @@ class BleDevicesService {
 
   final Plugin _plugin;
 
-  final List<Map<dynamic, dynamic>> _devicesList = [];
+  List<Map<dynamic, dynamic>> _devicesList = [];
   final List<String> _uuidList = [];
 
   List<Map<dynamic, dynamic>> get devices => _devicesList;
@@ -20,7 +20,23 @@ class BleDevicesService {
 
   StreamSubscription? _streamSubscription;
 
-  void listenToBLEStreams() {
+  Timer? _timer;
+
+  Future<void> start() async {
+    await _plugin.startListening();
+    _listenToBLEStreams();
+    _startPeriodicUpdateContext();
+  }
+
+  Future<void> stop() async {
+    _stopPeriodicUpdateContext();
+    _streamSubscription?.cancel();
+    _streamSubscription = null;
+    _devicesList = List.empty();
+    await _plugin.stopListening();
+  }
+
+  Future<void> _listenToBLEStreams() async {
     _streamSubscription = _plugin.onBleDataReceived.listen((device) {
       var uuid = device['uuid'];
 
@@ -31,9 +47,28 @@ class BleDevicesService {
     });
   }
 
-  void stopListeningToBLEStreams() {
-    _plugin.stopListening();
-    _streamSubscription?.cancel();
-    _streamSubscription = null;
+  void _startPeriodicUpdateContext() {
+    _timer = Timer.periodic(Duration(seconds: 3), (_) {
+      _updateContext();
+    });
+  }
+
+  void _stopPeriodicUpdateContext() {
+    _timer?.cancel();
+    _timer = null;
+  }
+
+  Future<void> _updateContext() async {
+    try {
+      // final List<String> uuidList = _devicesList
+      //     .map((device) => device['uuid'] as String)
+      //     .toList();
+      final List<String> uuidList = ['ea02d05b-179b-46a9-9137-103b06028fb7'];
+      await _plugin.updateContext(devices: uuidList);
+
+      print('Context updated');
+    } catch (e) {
+      print('Fail in updating context: $e');
+    }
   }
 }
