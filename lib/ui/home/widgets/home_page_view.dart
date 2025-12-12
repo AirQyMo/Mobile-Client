@@ -145,7 +145,7 @@ class _HomePageViewState extends State<HomePageView>
                     itemCount: viewModel.mensagens.length,
                     itemBuilder: (context, index) {
                       return GroupMessageTopicComponent(
-                        mensagem: viewModel.mensagens[index],
+                        mensagem: viewModel.mensagens[index]['analisys'],
                       );
                     },
                   ),
